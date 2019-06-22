@@ -178,6 +178,16 @@ public interface SNMPMIBListener extends ParseTreeListener {
 	 */
 	void exitValueAssignment(SNMPMIBParser.ValueAssignmentContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link SNMPMIBParser#texttype}.
+	 * @param ctx the parse tree
+	 */
+	void enterTexttype(SNMPMIBParser.TexttypeContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SNMPMIBParser#texttype}.
+	 * @param ctx the parse tree
+	 */
+	void exitTexttype(SNMPMIBParser.TexttypeContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link SNMPMIBParser#asnType}.
 	 * @param ctx the parse tree
 	 */

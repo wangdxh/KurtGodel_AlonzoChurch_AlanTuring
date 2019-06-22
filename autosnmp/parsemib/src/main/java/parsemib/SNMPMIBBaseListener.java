@@ -220,6 +220,18 @@ public class SNMPMIBBaseListener implements SNMPMIBListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterTexttype(SNMPMIBParser.TexttypeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitTexttype(SNMPMIBParser.TexttypeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterAsnType(SNMPMIBParser.AsnTypeContext ctx) { }
 	/**
 	 * {@inheritDoc}

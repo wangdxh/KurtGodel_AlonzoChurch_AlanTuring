@@ -62,7 +62,7 @@ assignment :
 	)
 ;
 
-typeAssignment : IDENTIFIER  '::='  asnType
+typeAssignment : IDENTIFIER  '::='  (asnType | texttype)
 ;
 
 valueAssignment : IDENTIFIER valuetype
@@ -70,6 +70,8 @@ valueAssignment : IDENTIFIER valuetype
 	  '::=' '{'  IDENTIFIER NUMBER '}'
 ;
 
+texttype :IDENTIFIER (valuedesctype)*
+;
 asnType : (builtinType | IDENTIFIER)  (constraint | sizeConstraint)*
 ;
 builtinType :
@@ -83,9 +85,10 @@ valuetype:
 	objectidentifiervaluetype 
 	| objectvalueType
 	| modulevalueType
+	| IDENTIFIER
 ;
-modulevalueType : 'OBJECT-TYPE';
-objectvalueType :'MODULE-IDENTITY';
+modulevalueType :'MODULE-IDENTITY';
+objectvalueType : 'OBJECT-TYPE';
 objectidentifiervaluetype :  'OBJECT' 'IDENTIFIER';
 
 valuedesctype:
@@ -97,8 +100,8 @@ syntaxdesctype:'SYNTAX' (asnType | ('SEQUENCE' 'OF' IDENTIFIER));
 //descdesctype: 'DESCRIPTION' CSTRING;
 //accessdesctype: 'ACCESS' IDENTIFIER;
 //statusdesctype:'STATUS' IDENTIFIER;
-indexdesctype: 'INDEX' '{' IDENTIFIER (',' IDENTIFIER)* '}';
-unknowndesctype: IDENTIFIER (CSTRING|IDENTIFIER);
+indexdesctype: ('INDEX'|IDENTIFIER) (IDENTIFIER)? '{' IDENTIFIER (',' IDENTIFIER)* '}';
+unknowndesctype: ('OBJECT'|IDENTIFIER) (CSTRING|IDENTIFIER);
 
 octetStringType  :  'OCTET' 'STRING';
 objectidentifiertype  :  'OBJECT' 'IDENTIFIER';
@@ -107,7 +110,8 @@ sequencetype: 'SEQUENCE' '{' typedefine (',' typedefine)* '}'
 typedefine : IDENTIFIER asnType
 ;
 
-integerType:'INTEGER'  ('{' namedNumberList '}')?
+integerType:('INTEGER'|'INTEGER32'|'Integer32'|'Integer')
+            (('{' namedNumberList '}') | ('(' NUMBER ('|' NUMBER)+ ')') )?
 ;
 namedNumberList : (namedNumber) (',' namedNumber)*
 ;
@@ -116,10 +120,9 @@ namedNumber :   IDENTIFIER '(' signedNumber ')'
 signedNumber :  ('-')? NUMBER
 ;
 
-
 sizeConstraint : '(' 'SIZE' constraint ')'
 ;
-constraint :'(' rangeconstraint ')'
+constraint :'(' (rangeconstraint | NUMBER) ')'
 ;
 rangeconstraint: signedNumber '..' signedNumber
 ;

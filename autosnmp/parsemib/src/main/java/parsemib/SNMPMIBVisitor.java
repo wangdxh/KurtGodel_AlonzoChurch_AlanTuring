@@ -113,6 +113,12 @@ public interface SNMPMIBVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitValueAssignment(SNMPMIBParser.ValueAssignmentContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link SNMPMIBParser#texttype}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTexttype(SNMPMIBParser.TexttypeContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link SNMPMIBParser#asnType}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

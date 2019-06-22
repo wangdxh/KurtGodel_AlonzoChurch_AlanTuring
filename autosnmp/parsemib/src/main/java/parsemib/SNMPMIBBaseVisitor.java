@@ -136,6 +136,13 @@ public class SNMPMIBBaseVisitor<T> extends AbstractParseTreeVisitor<T> implement
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
+	@Override public T visitTexttype(SNMPMIBParser.TexttypeContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
 	@Override public T visitAsnType(SNMPMIBParser.AsnTypeContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
