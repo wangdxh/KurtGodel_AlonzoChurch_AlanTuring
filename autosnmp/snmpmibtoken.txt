@@ -1,6 +1,8 @@
 {
 	"mgmt":{
-		"children":["mib-2"],
+		"children":[
+			"mib-2"
+		],
 		"itemtype":"NONE",
 		"name":"mgmt",
 		"oid":".1.3.6.1.2",
@@ -52,7 +54,9 @@
 		"strtype":""
 	},
 	"at":{
-		"children":["atTable"],
+		"children":[
+			"atTable"
+		],
 		"itemtype":"NONE",
 		"name":"at",
 		"oid":".1.3.6.1.2.1.3",
@@ -264,7 +268,9 @@
 		"strtype":"INTEGER"
 	},
 	"ifTable":{
-		"children":["ifEntry"],
+		"children":[
+			"ifEntry"
+		],
 		"itemtype":"SEQUENCE",
 		"name":"ifTable",
 		"oid":".1.3.6.1.2.1.2.2",
@@ -433,7 +439,9 @@
 		"strtype":"String"
 	},
 	"atTable":{
-		"children":["atEntry"],
+		"children":[
+			"atEntry"
+		],
 		"itemtype":"SEQUENCE",
 		"name":"atTable",
 		"oid":".1.3.6.1.2.1.3.1",
@@ -583,7 +591,9 @@
 		"strtype":"Counter"
 	},
 	"ipAddrTable":{
-		"children":["ipAddrEntry"],
+		"children":[
+			"ipAddrEntry"
+		],
 		"itemtype":"SEQUENCE",
 		"name":"ipAddrTable",
 		"oid":".1.3.6.1.2.1.4.20",
@@ -633,7 +643,9 @@
 		"strtype":"INTEGER"
 	},
 	"ipRouteTable":{
-		"children":["ipRouteEntry"],
+		"children":[
+			"ipRouteEntry"
+		],
 		"itemtype":"SEQUENCE",
 		"name":"ipRouteTable",
 		"oid":".1.3.6.1.2.1.4.21",
@@ -739,7 +751,9 @@
 		"strtype":"String"
 	},
 	"ipNetToMediaTable":{
-		"children":["ipNetToMediaEntry"],
+		"children":[
+			"ipNetToMediaEntry"
+		],
 		"itemtype":"SEQUENCE",
 		"name":"ipNetToMediaTable",
 		"oid":".1.3.6.1.2.1.4.22",
@@ -1016,7 +1030,9 @@
 		"strtype":"Counter"
 	},
 	"tcpConnTable":{
-		"children":["tcpConnEntry"],
+		"children":[
+			"tcpConnEntry"
+		],
 		"itemtype":"SEQUENCE",
 		"name":"tcpConnTable",
 		"oid":".1.3.6.1.2.1.6.13",
@@ -1102,7 +1118,9 @@
 		"strtype":"Counter"
 	},
 	"udpTable":{
-		"children":["udpEntry"],
+		"children":[
+			"udpEntry"
+		],
 		"itemtype":"SEQUENCE",
 		"name":"udpTable",
 		"oid":".1.3.6.1.2.1.7.5",
@@ -1155,7 +1173,9 @@
 		"strtype":"Counter"
 	},
 	"egpNeighTable":{
-		"children":["egpNeighEntry"],
+		"children":[
+			"egpNeighEntry"
+		],
 		"itemtype":"SEQUENCE",
 		"name":"egpNeighTable",
 		"oid":".1.3.6.1.2.1.8.5",
@@ -1527,7 +1547,9 @@
 		"strtype":""
 	},
 	"dot1dStatic":{
-		"children":["dot1dStaticTable"],
+		"children":[
+			"dot1dStaticTable"
+		],
 		"itemtype":"NONE",
 		"name":"dot1dStatic",
 		"oid":".1.3.6.1.2.1.17.5",
@@ -1562,7 +1584,9 @@
 		"strtype":"INTEGER"
 	},
 	"dot1dBasePortTable":{
-		"children":["dot1dBasePortEntry"],
+		"children":[
+			"dot1dBasePortEntry"
+		],
 		"itemtype":"SEQUENCE",
 		"name":"dot1dBasePortTable",
 		"oid":".1.3.6.1.2.1.17.1.4",
@@ -1696,7 +1720,9 @@
 		"strtype":"Timeout"
 	},
 	"dot1dStpPortTable":{
-		"children":["dot1dStpPortEntry"],
+		"children":[
+			"dot1dStpPortEntry"
+		],
 		"itemtype":"SEQUENCE",
 		"name":"dot1dStpPortTable",
 		"oid":".1.3.6.1.2.1.17.2.15",
@@ -1800,7 +1826,9 @@
 		"strtype":"INTEGER"
 	},
 	"dot1dTpFdbTable":{
-		"children":["dot1dTpFdbEntry"],
+		"children":[
+			"dot1dTpFdbEntry"
+		],
 		"itemtype":"SEQUENCE",
 		"name":"dot1dTpFdbTable",
 		"oid":".1.3.6.1.2.1.17.4.3",
@@ -1836,7 +1864,9 @@
 		"strtype":"INTEGER"
 	},
 	"dot1dTpPortTable":{
-		"children":["dot1dTpPortEntry"],
+		"children":[
+			"dot1dTpPortEntry"
+		],
 		"itemtype":"SEQUENCE",
 		"name":"dot1dTpPortTable",
 		"oid":".1.3.6.1.2.1.17.4.4",
@@ -1886,7 +1916,9 @@
 		"strtype":"Counter32"
 	},
 	"dot1dStaticTable":{
-		"children":["dot1dStaticEntry"],
+		"children":[
+			"dot1dStaticEntry"
+		],
 		"itemtype":"SEQUENCE",
 		"name":"dot1dStaticTable",
 		"oid":".1.3.6.1.2.1.17.5.1",
@@ -2116,7 +2148,9 @@
 		"strtype":""
 	},
 	"hrSWRunPerf":{
-		"children":["hrSWRunPerfTable"],
+		"children":[
+			"hrSWRunPerfTable"
+		],
 		"itemtype":"NONE",
 		"name":"hrSWRunPerf",
 		"oid":".1.3.6.1.2.1.25.5",
@@ -2205,7 +2239,9 @@
 		"strtype":"KBytes"
 	},
 	"hrStorageTable":{
-		"children":["hrStorageEntry"],
+		"children":[
+			"hrStorageEntry"
+		],
 		"itemtype":"SEQUENCE",
 		"name":"hrStorageTable",
 		"oid":".1.3.6.1.2.1.25.2.3",
@@ -2275,7 +2311,9 @@
 		"strtype":""
 	},
 	"hrDeviceTable":{
-		"children":["hrDeviceEntry"],
+		"children":[
+			"hrDeviceEntry"
+		],
 		"itemtype":"SEQUENCE",
 		"name":"hrDeviceTable",
 		"oid":".1.3.6.1.2.1.25.3.2",
@@ -2332,7 +2370,9 @@
 		"strtype":"Counter32"
 	},
 	"hrProcessorTable":{
-		"children":["hrProcessorEntry"],
+		"children":[
+			"hrProcessorEntry"
+		],
 		"itemtype":"SEQUENCE",
 		"name":"hrProcessorTable",
 		"oid":".1.3.6.1.2.1.25.3.3",
@@ -2361,14 +2401,18 @@
 		"strtype":"INTEGER"
 	},
 	"hrNetworkTable":{
-		"children":["hrNetworkEntry"],
+		"children":[
+			"hrNetworkEntry"
+		],
 		"itemtype":"SEQUENCE",
 		"name":"hrNetworkTable",
 		"oid":".1.3.6.1.2.1.25.3.4",
 		"strtype":"HrNetworkEntry"
 	},
 	"hrNetworkEntry":{
-		"children":["hrNetworkIfIndex"],
+		"children":[
+			"hrNetworkIfIndex"
+		],
 		"itemtype":"OBJECT",
 		"name":"hrNetworkEntry",
 		"oid":".1.3.6.1.2.1.25.3.4.1",
@@ -2381,7 +2425,9 @@
 		"strtype":"InterfaceIndexOrZero"
 	},
 	"hrPrinterTable":{
-		"children":["hrPrinterEntry"],
+		"children":[
+			"hrPrinterEntry"
+		],
 		"itemtype":"SEQUENCE",
 		"name":"hrPrinterTable",
 		"oid":".1.3.6.1.2.1.25.3.5",
@@ -2410,7 +2456,9 @@
 		"strtype":"String"
 	},
 	"hrDiskStorageTable":{
-		"children":["hrDiskStorageEntry"],
+		"children":[
+			"hrDiskStorageEntry"
+		],
 		"itemtype":"SEQUENCE",
 		"name":"hrDiskStorageTable",
 		"oid":".1.3.6.1.2.1.25.3.6",
@@ -2453,7 +2501,9 @@
 		"strtype":"KBytes"
 	},
 	"hrPartitionTable":{
-		"children":["hrPartitionEntry"],
+		"children":[
+			"hrPartitionEntry"
+		],
 		"itemtype":"SEQUENCE",
 		"name":"hrPartitionTable",
 		"oid":".1.3.6.1.2.1.25.3.7",
@@ -2509,7 +2559,9 @@
 		"strtype":""
 	},
 	"hrFSTable":{
-		"children":["hrFSEntry"],
+		"children":[
+			"hrFSEntry"
+		],
 		"itemtype":"SEQUENCE",
 		"name":"hrFSTable",
 		"oid":".1.3.6.1.2.1.25.3.8",
@@ -2593,7 +2645,9 @@
 		"strtype":"INTEGER"
 	},
 	"hrSWRunTable":{
-		"children":["hrSWRunEntry"],
+		"children":[
+			"hrSWRunEntry"
+		],
 		"itemtype":"SEQUENCE",
 		"name":"hrSWRunTable",
 		"oid":".1.3.6.1.2.1.25.4.2",
@@ -2657,7 +2711,9 @@
 		"strtype":"INTEGER"
 	},
 	"hrSWRunPerfTable":{
-		"children":["hrSWRunPerfEntry"],
+		"children":[
+			"hrSWRunPerfEntry"
+		],
 		"itemtype":"SEQUENCE",
 		"name":"hrSWRunPerfTable",
 		"oid":".1.3.6.1.2.1.25.5.1",
@@ -2698,7 +2754,9 @@
 		"strtype":"TimeTicks"
 	},
 	"hrSWInstalledTable":{
-		"children":["hrSWInstalledEntry"],
+		"children":[
+			"hrSWInstalledEntry"
+		],
 		"itemtype":"SEQUENCE",
 		"name":"hrSWInstalledTable",
 		"oid":".1.3.6.1.2.1.25.6.3",
@@ -2748,7 +2806,9 @@
 		"strtype":"DateAndTime"
 	},
 	"hrMIBCompliances":{
-		"children":["hrMIBCompliance"],
+		"children":[
+			"hrMIBCompliance"
+		],
 		"itemtype":"NONE",
 		"name":"hrMIBCompliances",
 		"oid":".1.3.6.1.2.1.25.7.2",
