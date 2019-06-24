@@ -22,6 +22,56 @@ class iteminfo{
     public String strtype;
     public ItemType itemtype;
     public List< String> children;
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+
+    public String getOid()
+    {
+        return oid;
+    }
+
+    public void setOid(String oid)
+    {
+        this.oid = oid;
+    }
+
+    public String getStrtype()
+    {
+        return strtype;
+    }
+
+    public void setStrtype(String strtype)
+    {
+        this.strtype = strtype;
+    }
+
+    public ItemType getItemtype()
+    {
+        return itemtype;
+    }
+
+    public void setItemtype(ItemType itemtype)
+    {
+        this.itemtype = itemtype;
+    }
+
+    public List<String> getChildren()
+    {
+        return children;
+    }
+
+    public void setChildren(List<String> children)
+    {
+        this.children = children;
+    }
 }
 
 public class myvisitor extends SNMPMIBBaseVisitor<String>

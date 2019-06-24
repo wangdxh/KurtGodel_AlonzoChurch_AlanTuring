@@ -1,12 +1,16 @@
 package parsemib;
 
+import com.alibaba.fastjson.JSON;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.TokenSource;
 
+import javax.json.Json;
+import javax.json.JsonObject;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
@@ -47,9 +51,19 @@ public class App
             System.out.printf("put(\"%s\", \"%s\");\n", key, val);
         });
         App.generatecode(rootitem, 0);
-
-
-
+        String strdata = JSON.toJSONString(m_tree, true);
+        System.out.println(strdata);
+        FileWriter writer;
+        try {
+            writer = new FileWriter("D:\\github\\kill-that-programmer\\autosnmp\\snmpmibtoken.txt");
+            writer.write("");//清空原文件内容
+            writer.write(strdata);
+            writer.flush();
+            writer.close();
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
 
         return;
     }
@@ -134,7 +148,9 @@ public class App
             for (String sunzi:itemson.children)
             {
                 iteminfo itemsunzi = m_tree.get(sunzi);
-                System.out.println("\t" + captureName(itemsunzi.name) + " " + getgotype(itemsunzi.strtype));
+                String strtag = String.format(" `snmp:\"%s\"`", itemsunzi.strtype);
+                System.out.println("\t" + captureName(itemsunzi.name) + " " + getgotype(itemsunzi.strtype) +
+                        strtag);
             }
             System.out.println("}");
             return;
