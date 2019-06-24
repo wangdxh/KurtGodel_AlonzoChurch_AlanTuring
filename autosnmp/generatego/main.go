@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/flosch/pongo2"
 	"io/ioutil"
 	"log"
 	"sort"
@@ -90,22 +91,55 @@ func getgotype(mibtype string) string {
 	return ret
 }
 
+type tplitem struct {
+	Name     string
+	Gotype   string
+	Gotag    string
+	Mibtype  string
+	Children []tplitem
+	Entryoid string
+}
+
+var g_seqlist []tplitem
+var g_objlist []tplitem
+
 func generatecode(item ItemInfo) {
 	if item.Itemtype == SEQUENCE_ITEMTYPE && item.Children != nil && len(item.Children) == 1 {
-		fmt.Printf("type %s struct  {\n", strings.Title(item.Name))
+		//fmt.Printf("type %s struct  {\n", strings.Title(item.Name))
 
 		itemson := g_maptree[item.Children[0]]
+
+		temp := tplitem{
+			Name:     item.Name,
+			Entryoid: itemson.Oid + ".",
+		}
+
 		for _, sunzi := range itemson.Children {
 
 			itemsunzi := g_maptree[sunzi]
-			strtag := fmt.Sprintf(" `snmp:\"%s\"`", itemsunzi.Strtype)
-			fmt.Println("\t", strings.Title(itemsunzi.Name), " ", getgotype(itemsunzi.Strtype), strtag)
+			//strtag := fmt.Sprintf(" `snmp:\"%s\"`", itemsunzi.Strtype)
+			//fmt.Println("\t", strings.Title(itemsunzi.Name), " ", getgotype(itemsunzi.Strtype), strtag)
+			tempsunzi := tplitem{
+				Name:    itemsunzi.Name,
+				Gotype:  getgotype(itemsunzi.Strtype),
+				Gotag:   fmt.Sprintf(" `snmp:\"%s\"`", itemsunzi.Strtype),
+				Mibtype: itemsunzi.Strtype,
+			}
+			temp.Children = append(temp.Children, tempsunzi)
 		}
-		fmt.Println("}")
+		g_seqlist = append(g_seqlist, temp)
+
 		return
 	}
 	if item.Itemtype == OBJECT_ITEMTYPE && item.Children == nil {
 		fmt.Println(item.Name, ":", getgotype(item.Strtype))
+		temp := tplitem{
+			Name:     item.Name,
+			Gotype:   getgotype(item.Strtype),
+			Mibtype:  item.Strtype,
+			Entryoid: item.Oid,
+		}
+		g_objlist = append(g_objlist, temp)
 	}
 
 	if item.Children != nil {
@@ -143,4 +177,22 @@ func main() {
 	}
 	fmt.Println("-----------------------------------------go code")
 	generatecode(getrootitem())
+	tplstruct, err := pongo2.FromFile("./snmp.go.tpl")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	strdata, err := tplstruct.Execute(pongo2.Context{
+		"seqlist": g_seqlist,
+		"objlist": g_objlist,
+	})
+	ioutil.WriteFile("../snmplib/snmp.go", []byte(strdata), 600)
+
+	tplfunc, err := pongo2.FromFile("./getfunc.go.tpl")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	strdata2, err := tplfunc.Execute(pongo2.Context{})
+	ioutil.WriteFile("../snmplib/getfunc.go", []byte(strdata2), 600)
 }
