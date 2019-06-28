@@ -41,7 +41,8 @@ def writefile(srcipport, data):
     filewrite.write(data)
     return 
 
-packets = scapy.rdpcap('./scannertcp.pcap')
+
+packets = scapy.rdpcap(sys.argv[1])
 #packets = scapy.rdpcap('./13168.pcap')
 clientportlist = []
 serverportlist = [80, 8080] ### this must must must set
@@ -97,7 +98,11 @@ for p in packets:
         continue
 
     #client send data with sync, and  server send data with sync and ack
-    if 'S' in p["TCP"].flags:
+    #if 'S' in p["TCP"].flags:
+    #    continue
+    
+    # great
+    if 'P' not in p["TCP"].flags:
         continue
 
     if  isinstance(p['TCP'].payload, scapy.packet.NoPayload) :
@@ -112,7 +117,7 @@ for p in packets:
     rawdatalen =  p['IP'].len - 20 - 20
     print("IP.len", p['IP'].len, rawdatalen)
     if rawdatalen == 0:
-        continue
+        continue    
 
     load = p['TCP'].payload.load[0:rawdatalen]
 
@@ -125,3 +130,9 @@ for p in packets:
     writefile(srcipport, p['TCP'].payload.load)
 for val in g_filemap.values():
     val.close()
+
+def main(argv):
+    print(argv[1])
+ 
+if __name__ == "__main__":
+    main(sys.argv)

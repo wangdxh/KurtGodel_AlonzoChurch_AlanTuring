@@ -15,7 +15,7 @@ now support the test case is go4api:  https://github.com/zpsean/go4api
   is a golang program that read the tcp data files and then parse them to http, then filter some urls,    
   then generate go4api test case in testcase directory   
   
- 
+now do not support tcp out-of-order and retransmission      
 
 tcp.analysis.retransmission      
 tcp.port == 13141 and tcp.analysis.retransmission 重传     
