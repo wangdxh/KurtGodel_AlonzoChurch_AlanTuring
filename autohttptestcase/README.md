@@ -17,7 +17,10 @@ now support the test case is go4api:  https://github.com/zpsean/go4api
   
  
 
-
+tcp.analysis.retransmission      
+tcp.port == 13141 and tcp.analysis.retransmission 重传     
+tshark -r 1.pcap -nn -Y rule -w 2.pcap     
+  
 
 
 
