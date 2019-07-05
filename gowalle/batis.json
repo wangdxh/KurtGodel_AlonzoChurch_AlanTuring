@@ -1,0 +1,348 @@
+
+///----------------------------------------------------------
+<mapper namespace＝”tk.mybatis.simple.mapper.CountryMapper”〉
+    <select id= ”selectAll”resultType=”Country” >
+        select id,countryname,countrycode from country 
+    </select>
+ </mapper> 
+ List<Country> countryList = sqlSession. selectList ( ”selectAl l”);
+
+
+///--------------------------------------------------------------------
+
+public interface UserMapper {
+    SysUser selectByid(Long id)
+}
+
+<resultMap id=”userMap”type=”tk.mybatis.simple.model.SysUser” >
+    <id property=”id”column=”id”/>
+    <result property=”userName”column=”user name”/>
+    <result property=”userPassword" column=”user_password”/>
+    <result property=”userEmail”column=”user_email”/>
+    <result property=”userinf o”column=”user_info ”/>
+    <result property=”head I mg”column=”head img”jdbcType=”BLOB”/>
+    <result property=”createTime”column=”create time ” jdbcType=”TIMES TAMP”/>
+</resultMap> 
+<select id=”selectByid”resultMap=”userMap” >
+    select * from sys_user where id = #{id} 
+</select> 
+
+
+List<SysUser> selectAll(); 
+<select id=”selectAll” resultType=”tk.mybatis.simple.model.SysUser” >
+    select id, user_name userName, user_password userPassword, user_email userEmail, user_info userinfo, head_img headimg,
+    create_time createTime from sys_user
+</select> 
+
+//但是考虑到性能，通常都会指定查询列，很少使用*代替所有列
+
+
+UserMapper userMapper = sqlSession. getMapper (UserMapper. class) ; ／／调用selectByid方法，查询id= 1的用户
+SysUser user= userMapper.selectByid(ll); 
+
+
+//-----------------------------------------------------------
+List<SysRole> selectRolesByUserid(Long userid);
+<select id＝”selectRolesByUserid” resultType＝”tk.mybatis.simple.model.SysRole”〉
+ select
+    r.id, r.role_name roleName,
+    r.enabled, r.create_by createBy,
+    r.create_time createTime 
+    from sys_user u  
+ inner join sys_user_role ur on u.id = ur.user_id 
+ inner join sys_role r on ur.role_id = r.id
+  where u.id = #{userid} 
+ </select> 
+
+//----------------联合表字段-------------------------------------------
+ 假设查询的结果不仅要包含sysrole中的信息，还要包含当前用户的部分信息（不考虑嵌套的情况），
+ 例如增加查询列u.user_nameas userName。这时resultType该如何设置呢？
+
+ class SysRoleExtend extends SysRole {
+      private String userName; 
+ }
+ 这种方式比较适合在需要少量额外宇段时使用，但是如果需要其他表中大量列的值时，
+ 这种方式就不适用了，因为我们不能将一个类的属性都照搬到另一个类中 
+
+-----------2 
+ public class SysRole {
+      //其他原有字段．．．/** 食用户信息*/ 
+      private SysUser user;
+ }
+查询列新增两行：
+u.user_name as ”user.userName”,
+u.user_email as ”user.userEmail”
+这里在设置别名的时候，使用的是“user.属性名”，user是SysRole中刚刚增加的属性，
+userName和userEmail是SysUser对象中的属性，
+通过这种方式可以直接将值赋给user字段中的属性。
+
+//-----------------插入------------------------------------------
+在UserMapper中添加如下方法
+int insert(SysUser sysUser);
+<insert id=”insert” >
+    insert into sys_user( id , user_name ,user_password, user_email, 
+    user_info, headimg, create_time) 
+    values( #{id}, #{userName}, #{userPassword}, # {userEmail},
+    #{userinfo}, #{headimg, jdbcType=BLOB}, #{createTime, jdbcType= TIMESTAMP}) 
+</insert>
+一个简单的INSERT语句，将所有的列都列举出来，
+在values中通过＃｛property｝方式从参数中取出属性的值
+
+//-----------------------------------------go sqlx --------------------
+sqlx test
+https://github.com/jmoiron/sqlx/blob/master/sqlx_test.go
+
+TestEmbeddedStructs
+tx.Rebind("INSERT INTO place (country, telcode) VALUES (?, ?)"), "Singapore", "65"
+
+TestJoinQuery
+
+type Employee struct {
+    Name string
+    ID   int64
+    // BossID is an id into the employee table
+    BossID sql.NullInt64 `db:"boss_id"`
+}
+type Boss Employee
+
+  var employees []struct {
+    Employee
+    Boss `db:"boss"`
+  }
+
+  err := db.Select(
+        &employees,
+        `SELECT employees.*, boss.id "boss.id", boss.name "boss.name" FROM employees
+        JOIN employees AS boss ON employees.boss_id = boss.id`)
+
+
+TestJoinQueryNamedPointerStructs
+
+// nested struct read
+type Employee struct {
+  Name string
+  ID   int64
+  // BossID is an id into the employee table
+  BossID sql.NullInt64 `db:"boss_id"`
+}
+type Boss Employee
+
+var employees []struct {
+  Emp1  *Employee `db:"emp1"`
+  Emp2  *Employee `db:"emp2"`
+  *Boss `db:"boss"`
+}
+
+err := db.Select(
+        &employees,
+        `SELECT emp.name "emp1.name", emp.id "emp1.id", emp.boss_id "emp1.boss_id",
+        emp.name "emp2.name", emp.id "emp2.id", emp.boss_id "emp2.boss_id",
+        boss.id "boss.id", boss.name "boss.name" FROM employees AS emp
+        JOIN employees AS boss ON emp.boss_id = boss.id
+      `)
+if err != nil {
+  t.Fatal(err)
+}
+
+//-------------named query  冒号后面跟着数据库的字段
+p := Person{
+  FirstName: sql.NullString{String: "ben", Valid: true},
+  LastName:  sql.NullString{String: "doe", Valid: true},
+  Email:     sql.NullString{String: "ben@doe.com", Valid: true},
+}
+
+q1 := `INSERT INTO person (first_name, last_name, email) VALUES (:first_name, :last_name, :email)`
+_, err := db.NamedExec(q1, p)
+
+p2 := &Person{}
+rows, err := db.NamedQuery("SELECT * FROM person WHERE first_name=:first_name", p)
+
+// ---------------nested struct
+
+// Test nested structs write
+type Place struct {
+    ID   int            `db:"id"`
+    Name sql.NullString `db:"name"`
+}
+type PlacePerson struct {
+    FirstName sql.NullString `db:"first_name"`
+    LastName  sql.NullString `db:"last_name"`
+    Email     sql.NullString
+    Place     Place `db:"place"`
+}
+
+pl := Place{
+    Name: sql.NullString{String: "myplace", Valid: true},
+}
+
+pp := PlacePerson{
+    FirstName: sql.NullString{String: "ben", Valid: true},
+    LastName:  sql.NullString{String: "doe", Valid: true},
+    Email:     sql.NullString{String: "ben@doe.com", Valid: true},
+}
+
+  q2 := `INSERT INTO place (id, name) VALUES (1, :name)`
+  _, err = db.NamedExec(q2, pl)
+  if err != nil {
+      log.Fatal(err)
+  }
+
+  id := 1
+  pp.Place.ID = id
+
+  q3 := `INSERT INTO placeperson (first_name, last_name, email, place_id)
+        VALUES (:first_name, :last_name, :email, :place.id)`
+  _, err = db.NamedExec(q3, pp)
+
+  if err != nil {
+    log.Fatal(err)
+  }
+
+//------------------
+pp2 := &PlacePerson{}
+pp.Place.ID = id
+
+rows, err = db.NamedQuery(`
+      SELECT
+      first_name,
+      last_name,
+      email,
+      place.id AS "place.id",
+      place.name AS "place.name"
+      FROM placeperson
+      INNER JOIN place ON place.id = placeperson.place_id
+      WHERE
+      place.id=:place.id`,
+pp)
+//----------------------
+//-----------------------------------------go sqlx over --------------------
+
+
+//-------------------------------------插入后没有收到主键值-----------------------
+<insert id= ”insert2”useGeneratedKeys= ”true ”keyProperty= ”id” >
+    insert into sys_user( user_name, user_password, user_email, 
+                          user info, head img, create time) 
+    values( #{userName}, #{userPassword}, #{userEmail}, #{userinfo} ,
+            #{headimg, jdbcType=BLOB}, #{createTime , jdbcType= TIMESTAMP}) 
+</insert> 
+注意自动生成的id auto_increment
+
+//---------------------- update
+int updateById(SysUser sysUser);
+
+<update id= ”updateByid” >
+    update sys_user set user name= #{userName}, user password= #{userPassword}, 
+    user email = #{userEmail}, user info= #{userinfo}, head img = #{headimg, jdbcType=BLOB},
+     create_time = #{createTime, jdbcType=TIMESTAMP} where id = #{id} 
+</update>
+
+//------------------ delete 
+int deleteByid(Long id); 
+
+<delete id=”deleteByid” >
+    delete from sys user where id = #{id} 
+</delete> 
+
+//---------------------------- 多个参数的查询
+多个参数的查询  sql use ? or :name use map[]
+
+//---------------------------- 注解方式
+// 注解方式 增加一个独立的gosql 的字段，通过tag来进行设置
+
+//---------------------------- 动态sql-------------------------------------------
+
+List<SysUser> selectByUser(SysUser sysUser);
+
+<select id=”selectByUser”result Type=”tk.mybatis .simple.model.SysUser” >
+    select id, user_name userName, 
+    user_password userPassword,
+    user_email userEmai1,user_info userinfo,
+    head_img headimg, create_time createTime 
+    from sys_user
+    where 1 = 1 
+    <if test=  ”userName != null and userName ! =””>
+        and user_name like concat （’%’，＃｛userName｝，’%’）
+    </if>
+    <if test=  ”userEmail ! = null and userEmail !=”” >
+        and user_email = #{userEmail}
+    </if>
+</select>
+
+1 = 1  why? OGNL not good,change
+----------------------------
+<update>
+    update sys_user set
+        <foreach collection= ”__parameter” iterm= ”val” index= ”key”separator=”,”>
+            ${key} = #{val}
+        </foreach> where id = #{id}
+</update>
+
+
+<insert id=”insertList”>
+    insert into sys user( user口ame,user password,
+                        user email, user_info, head_img, create_time) 
+        values 
+            <foreach collection=”list” itern=”user”separator=”,”>
+                #{user.userName}, #{user.userPassword},#{user.userEmail},
+                 #{user.userlnfo}, #{user.headlmg, jdbcType=BLOB},
+                #{user.createTime, jdbcType=TIMESTAMP}) 
+            </foreach> 
+ </insert>
+
+ where id in 
+    <foreach collection= ”list”open= ”  ( ”close= ”)”separator= ”,” 
+        item= ”id”index= ”i” >
+        #{id}
+    </foreach>
+
+一个choose中至少有一个when，有0个或者l个otherwise
+<choose> 
+    <when test= ”id != nul l” >
+        and id= #{id} 
+    </when> 
+    <when test= ”userName ! = null and userName !=””>
+        and user name = #{userName} 
+    </when> 
+    <otherwise> 
+        and 1   =   2 
+    </otherwise> 
+</choose>    
+
+当if条件都不满足的时候，where元素中没有内容，所以在SQL中不会出现where，
+也就不存在4.1.1节中SQL错误的问题。
+如果if条件满足，where元素的内容就是以and开头的条件，where会自动去掉开头的and，
+这也能保证where条件正确
+<where> 
+    <if test=”userName != null and userName !=””>
+        and user name l工keconcat（’毡’，＃｛userName｝，’在’）
+    </if>
+     <if test= ”userEmail ! =”and userEmail ! = nul l”>
+        and user email = #{userEmail} 
+    </if> 
+</where>
+
+TrimSqlNode 重新实现一个这种语法，或者复用时注意实现方式
+
+<trim prefix=”SET”suf f ixOverrides=”,” >
+
+</trim> 
+trim标签有如下属性
+    prefix：当trim元素内包含内容时，会给内容增加prefix指定的前缀。
+    prefixOverrides：当trim元素内包含内容时，会把内容中匹配的前缀字符串去掉。
+    suffix：当trim元素内包含内容时，会给内容增加suffix指定的后缀。
+    suffixOverrides：当trim元素内包含内容时，会把内容中匹配的后缀字符串去掉。
+
+//-----bind--------------
+<if test= ”userNarne != null and userNarne !=””>
+    <bind name="userNarneLike” value＝”’%’＋userNarne ＋'%'”／〉
+        and user name like #{userNarneLike} 
+</if>
+//------------------------------------------------------------------
+
+
+
+
+
+
+
+

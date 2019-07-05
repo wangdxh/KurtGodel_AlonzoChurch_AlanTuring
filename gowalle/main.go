@@ -42,7 +42,31 @@ func goformat(dir string) {
 	}
 }
 
+type test1 struct {
+	Name string `db:"name"`
+	Id   int    `db:"id"`
+}
+type test2 test1
+
+type testself struct {
+	test1
+	test2
+}
+
+type test3 struct {
+	Name2 string `db:"name2"`
+	Id2   int    `db:"id2"`
+}
+
+type testembed struct {
+	test1
+	test3
+}
+
 func main() {
+
+	return
+
 	goclear()
 
 	db, err := DbOpen("root", "kedacom", "172.16.64.92:3306",
