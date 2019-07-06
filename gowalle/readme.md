@@ -1,5 +1,6 @@
 ### 功能：
-基于sqlx和gin的强大功能，简直了
+基于sqlx和gin的强大功能，简直了  
+并没有设计成mybatis的样子，而是做成了代码生成，修改mybatis的配置文件可以动态修改sql语句和功能，而不需要代码重新编译。暂时我不需要这样的功能。如果需要可以参考gomybatis的功能。
 
 #### 定义函数类型
 * 定义结构体类型，快速组合已知的数据库表结构体
@@ -35,3 +36,12 @@
         ```
 #### 动态sql
 还没有想好设计的方式
+
+### http功能
+http的参数名称和类型等同数据库表的字段，url的route应该从gin的group而来，这样可以由外部的gin去指定route的路径深度
+* get从query而来
+* post从body而来
+* delete从query而来
+* update从body而来  
+
+应该使用shouldbindquery和shouldbindbody来自动绑定参数到结构体，当数据库的函数不是结构体时，在gin模块内生成局部结构体定义
