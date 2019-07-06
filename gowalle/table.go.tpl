@@ -14,3 +14,5 @@ type {{TableInfo.Name|title}} struct {
 	{{item.Field|title}} {{item.GoType}} `json:"{{item.Field}}" db:"{{item.Field}}" dbtype:"{{item.Type}},{{item.Key}}"` {% endfor %}    
 }
 
+// insert delete update select
+

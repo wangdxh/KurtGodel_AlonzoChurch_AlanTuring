@@ -88,9 +88,10 @@ int insert(SysUser sysUser);
 一个简单的INSERT语句，将所有的列都列举出来，
 在values中通过＃｛property｝方式从参数中取出属性的值
 
-//-----------------------------------------go sqlx --------------------
+//-----------------------------------------go sqlx ------------------------------------------------------------
 sqlx test
 https://github.com/jmoiron/sqlx/blob/master/sqlx_test.go
+
 
 TestEmbeddedStructs
 tx.Rebind("INSERT INTO place (country, telcode) VALUES (?, ?)"), "Singapore", "65"
@@ -159,6 +160,7 @@ rows, err := db.NamedQuery("SELECT * FROM person WHERE first_name=:first_name", 
 
 // ---------------nested struct
 
+
 // Test nested structs write
 type Place struct {
     ID   int            `db:"id"`
@@ -214,6 +216,11 @@ rows, err = db.NamedQuery(`
       WHERE
       place.id=:place.id`,
 pp)
+
+support insert list,great
+places := []*Place{&place1, &place2}
+db.NamedExec("INSERT INTO place (country, telcode) VALUES (:country, :telcode)", places)
+
 //----------------------
 //-----------------------------------------go sqlx over --------------------
 
