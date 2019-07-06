@@ -221,7 +221,26 @@ support insert list,great
 places := []*Place{&place1, &place2}
 db.NamedExec("INSERT INTO place (country, telcode) VALUES (:country, :telcode)", places)
 
-//----------------------
+
+go in 
+
+type tr struct {
+    q    string
+    args []interface{}
+    c    int
+}
+tests := []tr{
+    {"SELECT * FROM foo WHERE x = ? AND v in (?) AND y = ?",
+        []interface{}{"foo", []int{0, 5, 7, 2, 9}, "bar"},
+        7},
+    {"SELECT * FROM foo WHERE x in (?)",
+        []interface{}{[]int{1, 2, 3, 4, 5, 6, 7, 8}},
+        8},
+    {"SELECT * FROM foo WHERE x = ? AND y in (?)",
+        []interface{}{[]byte("foo"), []int{0, 5, 3}},
+        4},
+}
+
 //-----------------------------------------go sqlx over --------------------
 
 
@@ -344,12 +363,118 @@ trim标签有如下属性
     <bind name="userNarneLike” value＝”’%’＋userNarne ＋'%'”／〉
         and user name like #{userNarneLike} 
 </if>
-//------------------------------------------------------------------
 
 
+//------------------------------------------------------高级查询---------------------------------------------------------------------------
+//---------------------------一对一
+public class SysUser {
+     //其他原有字段
 
+    /** 用户角色*/ 
+    private SysRole role; 
+}    
+go语言的时候，u.user_name userName 后面userName不需要，"role.roleName"嵌套时，别名一定需要
 
+<select id=”selectUserAndRoleByid” result Type=”tk.mybatis.simple.model.SysUser” >
+    select u.id, u.user_name userName, u.user_password userPassword, u.user_email userEmail,
+     u.user_info userinfo, u.head_img headimg, u.create_time createTime, 
+     r.id "role.id" , r.role_name "role.roleName", r.enabled "role.enabled", r.create_by "role.createBy",
+     r.create_time "role.createTime" 
+     from 
+        sys_user u 
+        inner join sys_user_role ur  
+            on u.id = ur.user_id 
+        inner join sys_role r 
+            on ur.role_id = r.id 
+     where u.id = #{id} 
+</select>
 
+//----------------------------------------------------------------------一对多，多对多
+public class SysUser {
+     //原有属性
 
+     /** 用户的角色集合*/
+      private List<SysRole> roleList;
+}
 
+<select id=”selectAllUserAndRoles”resultMap=”userRoleListMap”>
+    select u.id,u.user_name, u.user_password, u.user_email, u.user_info, u.head_img, u.create_time,
+    r.id role_id, r.role_name role_role_name, r.enabled role_enabled, r.create_by role_create_by, r.create_time role_create_time
+    from 
+        sys_user u 
+        inner join sys_user_role ur 
+            on u.id = ur.user_id 
+        inner join sys_role r 
+            on ur.role_id= r.id 
+    
+</select>
+
+<resultMap id=”userRoleListMap”extends= ”userMap” type= ”tk.mybatis.simple. model.SysUser” >
+    <collection property=”roleList”columnPref ix=”role_” resultMap=”tk.mybatis.simple.mapper.RoleMapper.roleMap”/>
+</resultMap> 
+
+一对多go咋实现？
+list<SysUser> selectAllUserAndRoles();
+
+通过日志可以清楚地看到，SQL执行的结果数有3条，后面输出的用户数是2，
+也就是说本来查询出的3条结果经过MyBatis对collection数据的处理后，变成了两条。
+我们都知道，因为第一个用户拥有两个角色，所以转换为一对多的数据结构后就变成了两条结果。
+那么，MyBatis又是怎么知道要处理成这样的结果呢？
+
+先来看MyBatis是如何知道要合并ad.min的两条数据的，为什么不把test这条数据也合井进去呢？
+MyBatis在处理结果的时候，会判断结果是否相同，如果是相同的结果，则只会保留第一个结果，
+所以这个问题的关键点就是MyBatis如何判断结果是否相同。
+
+MyBatis判断结果是否相同时，最简单的情况就是在映射配置中至少有一个id标签，在userMap中配置如下<id property=”id”column=”id”/>
+我们对id（构造方法中为id Arg）的理解一般是，它配置的字段为表的主键（联合主键时可以配置多个id标签），
+因为MyBatis的resultMap只用于配置结果如何映射，并不知道这个表具体如何。
+id的唯一作用就是在嵌套的映射配置时判断数据是否相同，当配置id标签时，MyBatis只需要逐条比较所有数据中id标签配置的字段值是否相同即可。
+在配置嵌套结果查询时，配置id标签可以提高处理效率
+
+大家通过这个简单的例子应该明白id的作用了。需要注意，很可能会出现一种没有配置工d的情况。
+没有配置id时，MyBatis就会把resultMap中配置的所有字段进行比较，如果所有字段的值都相同就合并，只要有一个字段值不同，就不合井。
+//------------------------------------------------------------------------------------------------------------------
+
+<resul tMap id= ”privilegeMap”type= ”tk.mybatis.simple. model.SysPrivilege” >
+    <id property＝”id”column＝”id”／〉
+    <result property= ”privilegeName”column= ”privilege_ name”/>
+    <result property= ”privilegeUrl”column= ”privilege_url”/>
+</resultMap>
+
+然后在SysRole类中添加如下属性和方法。
+    /** 角色包含的权限列表*/ 
+    List<SysPrivilege> privilegeList;
+
+<select id＝”selectAllUserAndRoles”resultMap＝”userRoleListMap”〉
+    select u.id, u.user_name, u.user_password, u.user_email, u.user_info, u.head_img, u.create_time, 
+           r.id role_id, r.role_name role_role_name, r.enabled role_enabled, r.create_by role_create_by, r.create_time role_create_time,
+           p.id role_privilege_id, p.privilege_name role_privilege_privilege_name, p.privilege_url role_privilege_privilege_url
+           from 
+                sys_user u 
+                inner join sys_user_role ur 
+                    on u.id = ur.user_id 
+                inner join sys_role r 
+                    on ur.role id = r.id 
+                inner join sys_role_privilege rp 
+                    on rp.role_id = r.id 
+                inner join sys_privilege p on p.id = rp.privilege_id 
+        
+</select> 
+
+<select id=" selectAllRoleAndPri vileges”resultMap=”rolePrivilegeListMap”>
+    select r.id, r.role_name, r.enabled, r.create_by, r.create_time,p.id privilege_id, p.privilege_name privilege_privilege_name,
+           p.privilege_url privilege_privilege_url 
+    from sys_role r 
+        inner join sys_role_privilege rp 
+            on rp.role_id = r.id 
+        inner join sys_privilege p 
+            on p.id = rp.privilege_id 
+</select>
+
+<select id= ”selectPrivilegeByRoleId” resultMap= ”privilegeMap” >
+    select p.* from sys_privilege p 
+        inner join sys_role_privilege rp 
+            on rp.privilege_id= p.id 
+    where role_id = #{roleid} 
+</select>
 
