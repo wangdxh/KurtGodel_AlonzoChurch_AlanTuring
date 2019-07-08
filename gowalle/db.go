@@ -168,10 +168,10 @@ var g_mapsqltogotype = map[string]string{
 	"DOUBLE":  "float64",
 	"DECIMAL": "float64",
 
-	"DATE":      "time.Time ",
-	"TIME":      "time.Time ",
-	"DATETIME":  "time.Time ",
-	"TIMESTAMP": "time.Time ",
+	"DATE":      "time.Time",
+	"TIME":      "time.Time",
+	"DATETIME":  "time.Time",
+	"TIMESTAMP": "time.Time",
 	"YEAR":      "int",
 }
 

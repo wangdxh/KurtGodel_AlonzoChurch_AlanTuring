@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/xml"
 	"fmt"
 	"github.com/flosch/pongo2"
 	"io/ioutil"
@@ -41,33 +42,80 @@ func goformat(dir string) {
 		}
 	}
 }
+func pongo2filters() {
+	joinlines := func(in *pongo2.Value, param *pongo2.Value) (*pongo2.Value, *pongo2.Error) {
+		strin, bok := in.Interface().(string)
+		if !bok {
+			return nil, &pongo2.Error{
+				Sender:    "filter:gettablekey",
+				OrigError: fmt.Errorf("Filter input argument must be of type 'string'."),
+			}
+		}
+		strsep, bok := param.Interface().(string)
+		if !bok {
+			return nil, &pongo2.Error{
+				Sender:    "filter:gettablekey",
+				OrigError: fmt.Errorf("Filter input argument must be of type 'string'."),
+			}
+		}
+		strlines := strings.Split(strin, "\n")
+		var linelist []string
+		for _, value := range strlines {
+			strtemp := strings.Trim(value, " \n\t\r")
+			if len(strtemp) > 0 {
+				linelist = append(linelist, strtemp)
+			}
+		}
+		return pongo2.AsValue(strings.Join(linelist, strsep)), nil
+	}
+	pongo2.RegisterFilter("joinlines", joinlines)
 
-type test1 struct {
-	Name string `db:"name"`
-	Id   int    `db:"id"`
+	prefix := func(in *pongo2.Value, param *pongo2.Value) (*pongo2.Value, *pongo2.Error) {
+		strin, bok := in.Interface().(string)
+		if !bok {
+			return nil, &pongo2.Error{
+				Sender:    "filter:prefix",
+				OrigError: fmt.Errorf("Filter input argument must be of type 'string'."),
+			}
+		}
+		strsub, bok := param.Interface().(string)
+		if !bok {
+			return nil, &pongo2.Error{
+				Sender:    "filter:prefix",
+				OrigError: fmt.Errorf("Filter input argument must be of type 'string'."),
+			}
+		}
+		return pongo2.AsValue(strings.HasPrefix(strin, strsub)), nil
+	}
+	pongo2.RegisterFilter("prefix", prefix)
+
 }
-type test2 test1
 
-type testself struct {
-	test1
-	test2
+type funcdef struct {
+	FuncHeader  string `xml:"funcheader"`
+	Structdef   string `xml:"structdefine"`
+	QueryMethod string `xml:"querymethod"`
 }
-
-type test3 struct {
-	Name2 string `db:"name2"`
-	Id2   int    `db:"id2"`
+type tabinfo struct {
+	TabName  string `xml:"tabname"`
+	TabInfo  string `xml:"info"`
+	Tabtype  string `xml:"type"`
+	Tabgodef string `xml:"godef"`
 }
-
-type testembed struct {
-	test1
-	test3
+type dbdefs struct {
+	DbName    string    `xml:"dbname"`
+	Funcdefs  []funcdef `xml:"funcdefs"`
+	TableInfo []tabinfo `xml:"tabinfo"`
+}
+type SqlFile struct {
+	XMLName xml.Name `xml:"sqlfile"`
+	Dbdefs  []dbdefs `xml:"dbdefs"`
 }
 
 func main() {
 
-	return
-
 	goclear()
+	pongo2filters()
 
 	db, err := DbOpen("root", "kedacom", "172.16.64.92:3306",
 		"", false)
@@ -77,17 +125,24 @@ func main() {
 	}
 	defer DbClose(db)
 
+	/*x, err := ssssscanner.DbInsertScannertaskList(db, []ssssscanner.Scannertask{
+		ssssscanner.Scannertask{Name: "111111", Detail: "abc１"},
+		ssssscanner.Scannertask{Name: "111112", Detail: "abc３"},
+		ssssscanner.Scannertask{Name: "111113", Detail: "abc２"}})
+	fmt.Println(x, err)*/
+
 	dblist, err := GetAllDbandtables(db)
 	if err != nil {
 		fmt.Println(err)
 	}
+
 	for _, dbitem := range dblist {
 		fmt.Println("dbname : ", dbitem.DbName)
 
 		for _, tabinfo := range dbitem.TableInfoList {
 			fmt.Println("\t : ", tabinfo.Name)
 			for _, item := range tabinfo.Itemlist {
-				fmt.Println("\t\t", item.Field, item.Type, item.Key, item.Null, item.GoType)
+				fmt.Println("\t\t", item.Field, item.Type, item.Key, item.Null, item.GoType, item.Extra)
 			}
 		} //can be delete
 
@@ -103,17 +158,58 @@ func main() {
 			return
 		}
 		for _, tabinfo := range dbitem.TableInfoList {
-			strdata, _ := tplstruct.Execute(pongo2.Context{
-				"package":   dbitem.DbName,
-				"importmap": tabinfo.Importmap,
-				"TableInfo": tabinfo,
+			keyitemlist := []*TableItem{}
+			for _, value := range tabinfo.Itemlist {
+				if strings.Contains(value.Key, "PRI") {
+					keyitemlist = append(keyitemlist, value)
+				}
+			}
+
+			strdata, err := tplstruct.Execute(pongo2.Context{
+				"package":     dbitem.DbName,
+				"importmap":   tabinfo.Importmap,
+				"TableInfo":   tabinfo,
+				"keyitemlist": keyitemlist,
 			})
+			if err != nil {
+				fmt.Println(err)
+			}
 
 			ioutil.WriteFile(fmt.Sprintf("./db/%s/%s.go", dbitem.DbName, tabinfo.Name),
 				[]byte(strdata), 600)
 		}
 
 	}
+
+	sql := SqlFile{}
+	for _, dbitem := range dblist {
+		dbtemp := dbdefs{DbName: dbitem.DbName}
+
+		for _, tab := range dbitem.TableInfoList {
+			fmt.Println("\t : ", tab.Name)
+			tbtemp := tabinfo{TabName: tab.Name}
+
+			for _, item := range tab.Itemlist {
+				tbtemp.TabInfo += item.Field + ","
+				tbtemp.Tabtype += item.Type + ","
+				tbtemp.Tabgodef += item.Field + " " + item.GoType + ","
+			}
+
+			dbtemp.TableInfo = append(dbtemp.TableInfo, tbtemp)
+
+		}
+		dbtemp.Funcdefs = []funcdef{
+			funcdef{},
+		}
+		sql.Dbdefs = append(sql.Dbdefs, dbtemp)
+	}
+
+	data, err := xml.MarshalIndent(sql, "", "  ")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	ioutil.WriteFile("./config.xmlsample", data, os.ModePerm)
 
 	goformat("./db")
 }
