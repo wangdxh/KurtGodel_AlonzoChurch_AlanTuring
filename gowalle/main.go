@@ -1,9 +1,9 @@
 package main
 
 import (
-	"encoding/xml"
 	"fmt"
 	"github.com/flosch/pongo2"
+	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
 	"os"
@@ -108,11 +108,12 @@ type dbdefs struct {
 	TableInfo []tabinfo `xml:"tabinfo"`
 }
 type SqlFile struct {
-	XMLName xml.Name `xml:"sqlfile"`
-	Dbdefs  []dbdefs `xml:"dbdefs"`
+	Dbdefs []dbdefs `xml:"dbdefs"`
 }
 
 func main() {
+	parsewhere(`(and, true, "a = 123", (atom, "if b is not null", "b in [123, 354 ]"),  (or, true, "testor1", "testor2"))`)
+	return
 
 	goclear()
 	pongo2filters()
@@ -124,12 +125,6 @@ func main() {
 		return
 	}
 	defer DbClose(db)
-
-	/*x, err := ssssscanner.DbInsertScannertaskList(db, []ssssscanner.Scannertask{
-		ssssscanner.Scannertask{Name: "111111", Detail: "abc１"},
-		ssssscanner.Scannertask{Name: "111112", Detail: "abc３"},
-		ssssscanner.Scannertask{Name: "111113", Detail: "abc２"}})
-	fmt.Println(x, err)*/
 
 	dblist, err := GetAllDbandtables(db)
 	if err != nil {
@@ -151,8 +146,9 @@ func main() {
 			log.Fatal(err)
 			return
 		}
+
 		// generate the code
-		tplstruct, err := pongo2.FromFile("./table.go.tpl")
+		tplstruct, err := pongo2.FromFile("./tpl/table.go.tpl")
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -204,12 +200,12 @@ func main() {
 		sql.Dbdefs = append(sql.Dbdefs, dbtemp)
 	}
 
-	data, err := xml.MarshalIndent(sql, "", "  ")
+	data, err := yaml.Marshal(sql) //xml.MarshalIndent(sql, "", "  ")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	ioutil.WriteFile("./config.xmlsample", data, os.ModePerm)
+	ioutil.WriteFile("./config.sample.yaml", data, os.ModePerm)
 
 	goformat("./db")
 }

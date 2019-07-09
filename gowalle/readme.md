@@ -72,3 +72,7 @@ http的参数名称和类型等同数据库表的字段，url的route应该从gi
 * update从body而来  
 
 应该使用shouldbindquery和shouldbindbody来自动绑定参数到结构体，当数据库的函数不是结构体时，在gin模块内生成局部结构体定义
+
+
+####
+java -jar ./antlr-4.7.1-complete.jar -visitor ./PREFIX.g4  -o ./parser/  -no-listener -Dlanguage=Go
