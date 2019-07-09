@@ -112,7 +112,7 @@ type SqlFile struct {
 }
 
 func main() {
-	parsewhere(`(and, true, "a = 123", (atom, "if b is not null", "b in [123, 354 ]"),  (or, true, "testor1", "testor2"))`)
+	test()
 	return
 
 	goclear()

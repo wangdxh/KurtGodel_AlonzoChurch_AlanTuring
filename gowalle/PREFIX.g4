@@ -4,7 +4,7 @@ grammar PREFIX;
 expression :
     CSTRING  # expstring
     | '(' 'atom' ',' test ',' CSTRING ')' # expsignle
-    | '(' operate ',' test ','  expression (',' expression)* ')' # express
+    | '(' operate ',' test ','  expression ',' expression (',' expression)* ')' # express
     ;
 
 operate

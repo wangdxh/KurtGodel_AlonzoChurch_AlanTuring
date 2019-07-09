@@ -16,22 +16,23 @@ var _ = reflect.Copy
 var _ = strconv.Itoa
 
 var parserATN = []uint16{
-	3, 24715, 42794, 33075, 47597, 16764, 15335, 30598, 22884, 3, 12, 39, 4,
+	3, 24715, 42794, 33075, 47597, 16764, 15335, 30598, 22884, 3, 12, 41, 4,
 	2, 9, 2, 4, 3, 9, 3, 4, 4, 9, 4, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3,
-	2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 7, 2, 26,
-	10, 2, 12, 2, 14, 2, 29, 11, 2, 3, 2, 3, 2, 5, 2, 33, 10, 2, 3, 3, 3, 3,
-	3, 4, 3, 4, 3, 4, 2, 2, 5, 2, 4, 6, 2, 4, 4, 2, 4, 4, 7, 8, 4, 2, 9, 9,
-	11, 11, 2, 38, 2, 32, 3, 2, 2, 2, 4, 34, 3, 2, 2, 2, 6, 36, 3, 2, 2, 2,
-	8, 33, 7, 11, 2, 2, 9, 10, 7, 3, 2, 2, 10, 11, 7, 4, 2, 2, 11, 12, 7, 5,
-	2, 2, 12, 13, 5, 6, 4, 2, 13, 14, 7, 5, 2, 2, 14, 15, 7, 11, 2, 2, 15,
-	16, 7, 6, 2, 2, 16, 33, 3, 2, 2, 2, 17, 18, 7, 3, 2, 2, 18, 19, 5, 4, 3,
-	2, 19, 20, 7, 5, 2, 2, 20, 21, 5, 6, 4, 2, 21, 22, 7, 5, 2, 2, 22, 27,
-	5, 2, 2, 2, 23, 24, 7, 5, 2, 2, 24, 26, 5, 2, 2, 2, 25, 23, 3, 2, 2, 2,
-	26, 29, 3, 2, 2, 2, 27, 25, 3, 2, 2, 2, 27, 28, 3, 2, 2, 2, 28, 30, 3,
-	2, 2, 2, 29, 27, 3, 2, 2, 2, 30, 31, 7, 6, 2, 2, 31, 33, 3, 2, 2, 2, 32,
-	8, 3, 2, 2, 2, 32, 9, 3, 2, 2, 2, 32, 17, 3, 2, 2, 2, 33, 3, 3, 2, 2, 2,
-	34, 35, 9, 2, 2, 2, 35, 5, 3, 2, 2, 2, 36, 37, 9, 3, 2, 2, 37, 7, 3, 2,
-	2, 2, 4, 27, 32,
+	2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3,
+	2, 7, 2, 28, 10, 2, 12, 2, 14, 2, 31, 11, 2, 3, 2, 3, 2, 5, 2, 35, 10,
+	2, 3, 3, 3, 3, 3, 4, 3, 4, 3, 4, 2, 2, 5, 2, 4, 6, 2, 4, 4, 2, 4, 4, 7,
+	8, 4, 2, 9, 9, 11, 11, 2, 40, 2, 34, 3, 2, 2, 2, 4, 36, 3, 2, 2, 2, 6,
+	38, 3, 2, 2, 2, 8, 35, 7, 11, 2, 2, 9, 10, 7, 3, 2, 2, 10, 11, 7, 4, 2,
+	2, 11, 12, 7, 5, 2, 2, 12, 13, 5, 6, 4, 2, 13, 14, 7, 5, 2, 2, 14, 15,
+	7, 11, 2, 2, 15, 16, 7, 6, 2, 2, 16, 35, 3, 2, 2, 2, 17, 18, 7, 3, 2, 2,
+	18, 19, 5, 4, 3, 2, 19, 20, 7, 5, 2, 2, 20, 21, 5, 6, 4, 2, 21, 22, 7,
+	5, 2, 2, 22, 23, 5, 2, 2, 2, 23, 24, 7, 5, 2, 2, 24, 29, 5, 2, 2, 2, 25,
+	26, 7, 5, 2, 2, 26, 28, 5, 2, 2, 2, 27, 25, 3, 2, 2, 2, 28, 31, 3, 2, 2,
+	2, 29, 27, 3, 2, 2, 2, 29, 30, 3, 2, 2, 2, 30, 32, 3, 2, 2, 2, 31, 29,
+	3, 2, 2, 2, 32, 33, 7, 6, 2, 2, 33, 35, 3, 2, 2, 2, 34, 8, 3, 2, 2, 2,
+	34, 9, 3, 2, 2, 2, 34, 17, 3, 2, 2, 2, 35, 3, 3, 2, 2, 2, 36, 37, 9, 2,
+	2, 2, 37, 5, 3, 2, 2, 2, 38, 39, 9, 3, 2, 2, 39, 7, 3, 2, 2, 2, 4, 29,
+	34,
 }
 var deserializer = antlr.NewATNDeserializer(nil)
 var deserializedATN = deserializer.DeserializeFromUInt16(parserATN)
@@ -310,7 +311,7 @@ func (p *PREFIXParser) Expression() (localctx IExpressionContext) {
 		}
 	}()
 
-	p.SetState(30)
+	p.SetState(32)
 	p.GetErrorHandler().Sync(p)
 	switch p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 1, p.GetParserRuleContext()) {
 	case 1:
@@ -380,26 +381,34 @@ func (p *PREFIXParser) Expression() (localctx IExpressionContext) {
 			p.SetState(20)
 			p.Expression()
 		}
-		p.SetState(25)
+		{
+			p.SetState(21)
+			p.Match(PREFIXParserT__2)
+		}
+		{
+			p.SetState(22)
+			p.Expression()
+		}
+		p.SetState(27)
 		p.GetErrorHandler().Sync(p)
 		_la = p.GetTokenStream().LA(1)
 
 		for _la == PREFIXParserT__2 {
 			{
-				p.SetState(21)
+				p.SetState(23)
 				p.Match(PREFIXParserT__2)
 			}
 			{
-				p.SetState(22)
+				p.SetState(24)
 				p.Expression()
 			}
 
-			p.SetState(27)
+			p.SetState(29)
 			p.GetErrorHandler().Sync(p)
 			_la = p.GetTokenStream().LA(1)
 		}
 		{
-			p.SetState(28)
+			p.SetState(30)
 			p.Match(PREFIXParserT__3)
 		}
 
@@ -486,7 +495,7 @@ func (p *PREFIXParser) Operate() (localctx IOperateContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(32)
+		p.SetState(34)
 		_la = p.GetTokenStream().LA(1)
 
 		if !(((_la)&-(0x1f+1)) == 0 && ((1<<uint(_la))&((1<<PREFIXParserT__1)|(1<<PREFIXParserT__4)|(1<<PREFIXParserT__5))) != 0) {
@@ -583,7 +592,7 @@ func (p *PREFIXParser) Test() (localctx ITestContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(34)
+		p.SetState(36)
 		_la = p.GetTokenStream().LA(1)
 
 		if !(_la == PREFIXParserT__6 || _la == PREFIXParserCSTRING) {

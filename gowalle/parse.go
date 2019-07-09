@@ -58,7 +58,7 @@ func (v *Visitor) VisitTest(ctx *parser.TestContext) interface{} {
 	return ctx.GetText()
 }
 
-func parsewhere(where string) {
+func parsewhere(where string) Where {
 	is := antlr.NewInputStream(where)
 
 	// Create the Lexer
@@ -72,6 +72,7 @@ func parsewhere(where string) {
 	//Start is rule name of Calc.g4
 	a := p.Expression().Accept(v).(Where)
 	printwhere(&a, 0)
+	return a
 }
 
 func printwhere(where *Where, n int) {
@@ -81,9 +82,27 @@ func printwhere(where *Where, n int) {
 	}
 }
 
-func generategocode(where *Where, n int) {
-	fmt.Println(strings.Repeat("\t", n), where.Operate, where.Test, where.Sql)
-	for _, value := range where.Itemlist {
-		printwhere(&value, n+1)
+func isallatom(where *Where) bool {
+	if where.Test != "true" {
+		return false
 	}
+	for _, value := range where.Itemlist {
+		bret := isallatom(&value)
+		if bret == false {
+			return false
+		}
+	}
+	return true
+}
+func test() {
+	_ = `(and, true, "a = 123", (atom, true, "b in [123, 354 ]"),  (or, true, "testor1", "testor2"))`
+	where := parsewhere(`(and, true, "a = 123", "test good")`)
+	fmt.Println("result is ", isallatom(&where))
+}
+
+func genereatesql() {
+
+}
+func generategocode(where *Where, n int) {
+
 }
