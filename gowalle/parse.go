@@ -4,6 +4,7 @@ import (
 	"./parser"
 	"fmt"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
+	"github.com/flosch/pongo2"
 	"strings"
 )
 
@@ -38,24 +39,27 @@ func (v *Visitor) VisitExpress(ctx *parser.ExpressContext) interface{} {
 
 func (v *Visitor) VisitExpsignle(ctx *parser.ExpsignleContext) interface{} {
 	fmt.Println("string ", ctx.GetText())
-	where := Where{Operate: "atom", Test: ctx.Test().GetText(), Sql: ctx.CSTRING().GetText()}
+	where := Where{
+		Operate: "atom", Test: strings.Trim(ctx.Test().GetText(), `"`),
+		Sql: strings.Trim(ctx.CSTRING().GetText(), `"`),
+	}
 	return where
 }
 
 func (v *Visitor) VisitExpstring(ctx *parser.ExpstringContext) interface{} {
 	fmt.Println("string ", ctx.GetText())
-	where := Where{Operate: "atom", Test: "true", Sql: ctx.GetText()}
+	where := Where{Operate: "atom", Test: "true", Sql: strings.Trim(ctx.GetText(), `"`)}
 	return where
 }
 
 func (v *Visitor) VisitOperate(ctx *parser.OperateContext) interface{} {
 	fmt.Println("operate ", ctx.GetText())
-	return ctx.GetText()
+	return strings.Trim(ctx.GetText(), `"`)
 }
 
 func (v *Visitor) VisitTest(ctx *parser.TestContext) interface{} {
 	fmt.Println("test ", ctx.GetText())
-	return ctx.GetText()
+	return strings.Trim(ctx.GetText(), `"`)
 }
 
 func parsewhere(where string) Where {
@@ -82,26 +86,69 @@ func printwhere(where *Where, n int) {
 	}
 }
 
-func isallatom(where *Where) bool {
+func test() {
+	//where := parsewhere(`(and, true, "a = 123", (atom, "item!=aaa", "b in [123, 354 ]"),  (or, "iftestor ", (atom, "iftestor1", "testor1"), "testor2"))`)
+	//where := parsewhere(`(and, true, "a = 123", (atom, "item!=aaa", "b in [123, 354 ]"),  (or, true, "testor1", "testor2"))`)
+	//where := parsewhere(`(and, true, "a = 123", "test '' 'good'")`)
+	//where := parsewhere(`"a betewen in"`)
+
+	where := parsewhere(`(and, true, "a = 123", (atom, "if item!=aaa", "b in ['123', 354 ]"),  (or, "iftestor ", (atom, "iftestor1", "testor1"), (and, "if orand", (atom, "testfff", "testfff != zz"), "testfff3"), "testor2"))`)
+	fmt.Println("result is ", isallatom(where))
+	fmt.Println("-------------------------------------")
+	genereatesql(where)
+	pongo2.SetAutoescape(false)
+	tplstruct, err := pongo2.FromFile("./tpl/where.tpl")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	strdata, err := tplstruct.Execute(pongo2.Context{
+		"where": where,
+	})
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(strdata)
+
+}
+
+func isallatom(where Where) bool {
 	if where.Test != "true" {
 		return false
 	}
 	for _, value := range where.Itemlist {
-		bret := isallatom(&value)
+		bret := isallatom(value)
 		if bret == false {
 			return false
 		}
 	}
 	return true
 }
-func test() {
-	_ = `(and, true, "a = 123", (atom, true, "b in [123, 354 ]"),  (or, true, "testor1", "testor2"))`
-	where := parsewhere(`(and, true, "a = 123", "test good")`)
-	fmt.Println("result is ", isallatom(&where))
+
+func generateatom(where Where) string {
+	var sqls []string
+	if len(where.Sql) > 0 {
+		return "(" + strings.Trim(where.Sql, "\"") + ")"
+	}
+	for _, value := range where.Itemlist {
+		sqls = append(sqls, generateatom(value))
+	}
+	return "(" + strings.Join(sqls, " "+where.Operate+" ") + ")"
 }
 
-func genereatesql() {
-
+func genereatesql(where Where) {
+	if isallatom(where) {
+		fmt.Println("where := ", generateatom(where))
+	}
+	if true {
+		aa := "aa"
+		if true {
+			aa := "bb"
+			fmt.Println(aa)
+		}
+		fmt.Println(aa)
+	}
 }
 func generategocode(where *Where, n int) {
 

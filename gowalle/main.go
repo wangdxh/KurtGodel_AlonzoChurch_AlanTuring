@@ -89,6 +89,67 @@ func pongo2filters() {
 	}
 	pongo2.RegisterFilter("prefix", prefix)
 
+	isallatomfilter := func(in *pongo2.Value, param *pongo2.Value) (*pongo2.Value, *pongo2.Error) {
+		where, bok := in.Interface().(Where)
+		if !bok {
+			return nil, &pongo2.Error{
+				Sender:    "filter:isallatomfilter",
+				OrigError: fmt.Errorf("Filter input argument must be of type 'where'."),
+			}
+		}
+		return pongo2.AsValue(isallatom(where)), nil
+	}
+	pongo2.RegisterFilter("isallatom", isallatomfilter)
+
+	generateatomfilter := func(in *pongo2.Value, param *pongo2.Value) (*pongo2.Value, *pongo2.Error) {
+		where, bok := in.Interface().(Where)
+		if !bok {
+			return nil, &pongo2.Error{
+				Sender:    "filter:generateatomfilter",
+				OrigError: fmt.Errorf("Filter input argument must be of type 'where'."),
+			}
+		}
+		return pongo2.AsValue(generateatom(where)), nil
+	}
+	pongo2.RegisterFilter("generateatom", generateatomfilter)
+
+	trim := func(in *pongo2.Value, param *pongo2.Value) (*pongo2.Value, *pongo2.Error) {
+		strin, bok := in.Interface().(string)
+		if !bok {
+			return nil, &pongo2.Error{
+				Sender:    "filter:trim",
+				OrigError: fmt.Errorf("Filter input argument must be of type 'string'."),
+			}
+		}
+		/*strsub, bok := param.Interface().(string)
+		if !bok {
+			return nil, &pongo2.Error{
+				Sender:    "filter:trim",
+				OrigError: fmt.Errorf("Filter input argument must be of type 'string'."),
+			}
+		}*/
+		return pongo2.AsValue(strings.Trim(strin, `"`)), nil
+	}
+	pongo2.RegisterFilter("trim", trim)
+
+	sql := func(in *pongo2.Value, param *pongo2.Value) (*pongo2.Value, *pongo2.Error) {
+		strin, bok := in.Interface().(string)
+		if !bok {
+			return nil, &pongo2.Error{
+				Sender:    "filter:sql",
+				OrigError: fmt.Errorf("Filter input argument must be of type 'string'."),
+			}
+		}
+		/*strsub, bok := param.Interface().(string)
+		if !bok {
+			return nil, &pongo2.Error{
+				Sender:    "filter:sql",
+				OrigError: fmt.Errorf("Filter input argument must be of type 'string'."),
+			}
+		}*/
+		return pongo2.AsValue("(" + strin + ")"), nil
+	}
+	pongo2.RegisterFilter("sql", sql)
 }
 
 type funcdef struct {
@@ -112,11 +173,12 @@ type SqlFile struct {
 }
 
 func main() {
+	pongo2filters()
+
 	test()
 	return
 
 	goclear()
-	pongo2filters()
 
 	db, err := DbOpen("root", "kedacom", "172.16.64.92:3306",
 		"", false)
