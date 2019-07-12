@@ -76,3 +76,6 @@ http的参数名称和类型等同数据库表的字段，url的route应该从gi
 
 ####
 java -jar ./antlr-4.7.1-complete.jar -visitor ./PREFIX.g4  -o ./parser/  -no-listener -Dlanguage=Go
+
+### go reflect 
+https://studygolang.com/articles/12348?fr=sidebar
