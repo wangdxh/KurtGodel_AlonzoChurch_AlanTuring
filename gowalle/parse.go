@@ -2,6 +2,7 @@ package main
 
 import (
 	"./parser"
+	"encoding/json"
 	"fmt"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"github.com/flosch/pongo2"
@@ -152,4 +153,100 @@ func genereatesql(where Where) {
 }
 func generategocode(where *Where, n int) {
 
+}
+
+type TestA struct {
+	Id int
+	X  string
+}
+type TestB struct {
+	Id int
+	X  string
+}
+type TestC struct {
+	Id int
+	X  string
+}
+
+type Testresult struct {
+	TestA
+	TestB
+	TestC
+}
+
+type TestBMerge struct {
+	TestB `merge:"id"`
+	C     []*TestC `json:"privis"`
+}
+
+type TestMerge struct {
+	TestA `merge:"id"`
+	B     []*TestBMerge `merge:"" json:"roles"`
+}
+
+func init() {
+	x := []Testresult{
+		{TestA{Id: 1, X: "x"}, TestB{2, "xx"}, TestC{3, "xxx"}},
+		{TestA{Id: 1, X: "x"}, TestB{2, "xx"}, TestC{4, "xxx"}},
+		{TestA{Id: 2, X: "x"}, TestB{2, "xx"}, TestC{3, "xxx"}},
+		{TestA{Id: 3, X: "x"}, TestB{2, "xx"}, TestC{2, "xxx"}},
+		{TestA{Id: 3, X: "x"}, TestB{2, "xx"}, TestC{3, "xxx"}},
+		{TestA{Id: 3, X: "x"}, TestB{3, "xx"}, TestC{3, "xxx"}},
+	}
+	y := Groupby(x)
+	/*for _, value := range y {
+		fmt.Println(value.TestA)
+		for _, val := range value.B {
+			fmt.Println("\t", val.TestB)
+			for _, val2 := range val.C {
+				fmt.Println("\t\t", val2.Id, val2.X)
+			}
+		}
+	}*/
+	data, _ := json.MarshalIndent(y, "", "   ")
+	fmt.Printf(string(data))
+}
+
+func Groupby(testresult []Testresult) (merge []*TestMerge) {
+	for _, valres := range testresult {
+		var m0 *TestMerge
+		for _, valmerg := range merge {
+			if valmerg.TestA.Id == valres.TestA.Id {
+				m0 = valmerg
+				break
+			}
+		}
+		if m0 == nil {
+			m0 = &TestMerge{}
+			merge = append(merge, m0)
+		}
+
+		m0.TestA = valres.TestA
+
+		var m1 *TestBMerge
+		for _, value := range m0.B {
+			if value.TestB.Id == valres.TestB.Id {
+				m1 = value
+				break
+			}
+		}
+		if m1 == nil {
+			m1 = &TestBMerge{}
+			m0.B = append(m0.B, m1)
+		}
+		m1.TestB = valres.TestB
+
+		var m2 *TestC
+		for _, value := range m1.C {
+			if valres.TestC.Id == value.Id {
+				m2 = value
+			}
+		}
+		if m2 == nil {
+			m2 = &TestC{}
+			m1.C = append(m1.C, m2)
+		}
+		*m2 = valres.TestC
+	}
+	return
 }
