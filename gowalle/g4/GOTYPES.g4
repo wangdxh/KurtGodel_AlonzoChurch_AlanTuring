@@ -109,7 +109,7 @@ IDENTIFIER
 
 NEWLINE:'\r'? '\n';
 
-LINE_COMMENT
+/*LINE_COMMENT
     : '//' ~('\n'|'\r')* '\r'? '\n' -> skip
-    ;
+    ;*/
 COMMENT : '/*' .*? '*/' -> skip;

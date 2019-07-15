@@ -15,7 +15,7 @@ var _ = reflect.Copy
 var _ = strconv.Itoa
 
 var parserATN = []uint16{
-	3, 24715, 42794, 33075, 47597, 16764, 15335, 30598, 22884, 3, 21, 104,
+	3, 24715, 42794, 33075, 47597, 16764, 15335, 30598, 22884, 3, 20, 104,
 	4, 2, 9, 2, 4, 3, 9, 3, 4, 4, 9, 4, 4, 5, 9, 5, 4, 6, 9, 6, 4, 7, 9, 7,
 	4, 8, 9, 8, 4, 9, 9, 9, 3, 2, 6, 2, 20, 10, 2, 13, 2, 14, 2, 21, 3, 3,
 	3, 3, 5, 3, 26, 10, 3, 3, 3, 3, 3, 5, 3, 30, 10, 3, 3, 3, 5, 3, 33, 10,
@@ -69,7 +69,7 @@ var literalNames = []string{
 }
 var symbolicNames = []string{
 	"", "", "", "", "", "", "", "", "", "", "", "POINTER", "BRACKETS", "WS",
-	"CSTRING", "APOSTROPHE", "IDENTIFIER", "NEWLINE", "LINE_COMMENT", "COMMENT",
+	"CSTRING", "APOSTROPHE", "IDENTIFIER", "NEWLINE", "COMMENT",
 }
 
 var ruleNames = []string{
@@ -104,26 +104,25 @@ func NewGOTYPESParser(input antlr.TokenStream) *GOTYPESParser {
 
 // GOTYPESParser tokens.
 const (
-	GOTYPESParserEOF          = antlr.TokenEOF
-	GOTYPESParserT__0         = 1
-	GOTYPESParserT__1         = 2
-	GOTYPESParserT__2         = 3
-	GOTYPESParserT__3         = 4
-	GOTYPESParserT__4         = 5
-	GOTYPESParserT__5         = 6
-	GOTYPESParserT__6         = 7
-	GOTYPESParserT__7         = 8
-	GOTYPESParserT__8         = 9
-	GOTYPESParserT__9         = 10
-	GOTYPESParserPOINTER      = 11
-	GOTYPESParserBRACKETS     = 12
-	GOTYPESParserWS           = 13
-	GOTYPESParserCSTRING      = 14
-	GOTYPESParserAPOSTROPHE   = 15
-	GOTYPESParserIDENTIFIER   = 16
-	GOTYPESParserNEWLINE      = 17
-	GOTYPESParserLINE_COMMENT = 18
-	GOTYPESParserCOMMENT      = 19
+	GOTYPESParserEOF        = antlr.TokenEOF
+	GOTYPESParserT__0       = 1
+	GOTYPESParserT__1       = 2
+	GOTYPESParserT__2       = 3
+	GOTYPESParserT__3       = 4
+	GOTYPESParserT__4       = 5
+	GOTYPESParserT__5       = 6
+	GOTYPESParserT__6       = 7
+	GOTYPESParserT__7       = 8
+	GOTYPESParserT__8       = 9
+	GOTYPESParserT__9       = 10
+	GOTYPESParserPOINTER    = 11
+	GOTYPESParserBRACKETS   = 12
+	GOTYPESParserWS         = 13
+	GOTYPESParserCSTRING    = 14
+	GOTYPESParserAPOSTROPHE = 15
+	GOTYPESParserIDENTIFIER = 16
+	GOTYPESParserNEWLINE    = 17
+	GOTYPESParserCOMMENT    = 18
 )
 
 // GOTYPESParser rules.

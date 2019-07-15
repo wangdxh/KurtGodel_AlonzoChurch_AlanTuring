@@ -1,6 +1,6 @@
 type Testresult struct {
 	TestA
-	TestB
+	TestB /*great*/
 	TestC
 }
 

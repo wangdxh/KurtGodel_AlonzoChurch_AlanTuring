@@ -168,7 +168,7 @@ func Parsestruct(strdef string) GoDefs {
 
 	// Create the Parser
 	p := gotypes.NewGOTYPESParser(tokens)
-	//p.AddErrorListener(antlr.ConsoleErrorListenerINSTANCE)
+	p.AddErrorListener(antlr.ConsoleErrorListenerINSTANCE)
 
 	v := &GoTypesVisitor{}
 	v.visitRule(p.Prog())
