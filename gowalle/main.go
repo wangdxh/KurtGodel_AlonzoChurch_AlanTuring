@@ -64,7 +64,7 @@ type SqlFile struct {
 }
 
 func main() {
-	test()
+	//test()
 	return
 
 	goclear()

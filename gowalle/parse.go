@@ -175,13 +175,13 @@ type Testresult struct {
 }
 
 type TestBMerge struct {
-	TestB `merge:"id"`
+	TestB `groupby:"id"`
 	C     []*TestC `json:"privis"`
 }
 
 type TestMerge struct {
-	TestA `merge:"id"`
-	B     []*TestBMerge `merge:"" json:"roles"`
+	TestA `groupby:"id"`
+	B     []*TestBMerge `groupby:"" json:"roles"` //when we get the list will go into
 }
 
 func init() {

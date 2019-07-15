@@ -1,0 +1,19 @@
+type Testresult struct {
+	TestA
+	TestB
+	TestC
+}
+
+type TestBMerge struct {
+	TestB `groupby:"id"`
+	C     []*TestC `json:"privis"`
+}
+
+func thisisfunc (good , item *string, item2 int32) string
+
+type TestMerge struct {
+	TestA `groupby:"id"`
+	B     []*TestBMerge `groupby:"" json:"roles"`
+}
+func emptyfunc () int
+
