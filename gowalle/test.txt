@@ -1,19 +1,35 @@
+type TestA struct {
+	Id int
+	X  string
+}
+type TestB struct {
+	Id int
+	X  string
+}
+type TestC struct {
+	Id int
+	X  string
+}
+
 type Testresult struct {
 	TestA
-	TestB /*great*/
+	TestB
 	TestC
 }
-
+ 
 type TestBMerge struct {
-	TestB `groupby:"id"`
-	C     []*TestC `json:"privis"`
+	unique "TestB.Id == TestB.Id"
+	TestB  `assign:"TestB"`
+	C     []*TestC `unique:"Id == TestC.Id" assign:"TestC" `
 }
 
-func thisisfunc (good , item *string, item2 int32) string
-
-type TestMerge struct {
-	TestA `groupby:"id"`
-	B     []*TestBMerge `groupby:"" json:"roles"`
+type TestMerge struct {	
+	unique  `unique:"TestA.Id,TestA.Id"`
+	TestA assign:"TestA"
+	B     []*TestBMerge
+	Xlist []string unique:"self == TestC.X" assign:"TestC.X"
 }
-func emptyfunc () int
+
+
+
 
