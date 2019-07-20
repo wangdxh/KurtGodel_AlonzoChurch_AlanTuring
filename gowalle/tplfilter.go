@@ -78,24 +78,18 @@ func init() {
 	}
 	pongo2.RegisterFilter("generateatom", generateatomfilter)
 
-	trim := func(in *pongo2.Value, param *pongo2.Value) (*pongo2.Value, *pongo2.Error) {
+	getstructItem := func(in *pongo2.Value, param *pongo2.Value) (*pongo2.Value, *pongo2.Error) {
 		strin, bok := in.Interface().(string)
 		if !bok {
 			return nil, &pongo2.Error{
-				Sender:    "filter:trim",
+				Sender:    "filter:getstructItem",
 				OrigError: fmt.Errorf("Filter input argument must be of type 'string'."),
 			}
 		}
-		/*strsub, bok := param.Interface().(string)
-		if !bok {
-			return nil, &pongo2.Error{
-				Sender:    "filter:trim",
-				OrigError: fmt.Errorf("Filter input argument must be of type 'string'."),
-			}
-		}*/
+
 		return pongo2.AsValue(strings.Trim(strin, `"`)), nil
 	}
-	pongo2.RegisterFilter("trim", trim)
+	pongo2.RegisterFilter("getstructItem", getstructItem)
 
 	sql := func(in *pongo2.Value, param *pongo2.Value) (*pongo2.Value, *pongo2.Error) {
 		strin, bok := in.Interface().(string)

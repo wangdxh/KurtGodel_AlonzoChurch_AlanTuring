@@ -23,6 +23,10 @@ func (v *BaseGOTYPESVisitor) VisitArgs(ctx *ArgsContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
+func (v *BaseGOTYPESVisitor) VisitRettyps(ctx *RettypsContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
 func (v *BaseGOTYPESVisitor) VisitStructdef(ctx *StructdefContext) interface{} {
 	return v.VisitChildren(ctx)
 }

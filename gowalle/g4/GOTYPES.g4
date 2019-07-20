@@ -10,11 +10,15 @@ expression
 // fucntion define
 
 funcdef
-    : 'func' IDENTIFIER '(' args? (',' args)* ')' IDENTIFIER
+    : 'func' IDENTIFIER '(' args? (',' args)* ')' rettyps
     ;
 
 args
     : IDENTIFIER BRACKETS? POINTER? IDENTIFIER?
+    ;
+
+rettyps
+    : BRACKETS? POINTER? IDENTIFIER
     ;
 
 // struct define

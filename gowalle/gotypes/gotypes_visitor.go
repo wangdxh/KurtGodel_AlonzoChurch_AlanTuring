@@ -19,6 +19,9 @@ type GOTYPESVisitor interface {
 	// Visit a parse tree produced by GOTYPESParser#args.
 	VisitArgs(ctx *ArgsContext) interface{}
 
+	// Visit a parse tree produced by GOTYPESParser#rettyps.
+	VisitRettyps(ctx *RettypsContext) interface{}
+
 	// Visit a parse tree produced by GOTYPESParser#structdef.
 	VisitStructdef(ctx *StructdefContext) interface{}
 

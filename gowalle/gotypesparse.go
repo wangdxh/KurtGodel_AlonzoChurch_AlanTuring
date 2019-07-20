@@ -4,6 +4,7 @@ import (
 	"./gotypes"
 	"fmt"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
+	"github.com/flosch/pongo2"
 	"io/ioutil"
 	"strings"
 )
@@ -20,7 +21,7 @@ type GoDefs struct {
 
 type Func struct {
 	Name     string
-	RetType  string
+	RetType  Argitem
 	Arglists []Argitem
 }
 
@@ -69,8 +70,8 @@ func (v *GoTypesVisitor) VisitExpression(ctx *gotypes.ExpressionContext) interfa
 
 func (v *GoTypesVisitor) VisitFuncdef(ctx *gotypes.FuncdefContext) interface{} {
 	item := Func{}
-	item.Name = ctx.IDENTIFIER(0).GetText()
-	item.RetType = ctx.IDENTIFIER(1).GetText()
+	item.Name = ctx.IDENTIFIER().GetText()
+	item.RetType = v.visitRule(ctx.Rettyps()).(Argitem)
 	for _, value := range ctx.AllArgs() {
 		item.Arglists = append(item.Arglists, v.visitRule(value).(Argitem))
 	}
@@ -86,6 +87,18 @@ func (v *GoTypesVisitor) VisitArgs(ctx *gotypes.ArgsContext) interface{} {
 		item.Name = ctx.IDENTIFIER(0).GetText()
 		item.Type = ctx.IDENTIFIER(1).GetText()
 	}
+	if ctx.BRACKETS() != nil {
+		item.Islist = true
+	}
+	if ctx.POINTER() != nil {
+		item.Ispointer = true
+	}
+	return item
+}
+
+func (v *GoTypesVisitor) VisitRettyps(ctx *gotypes.RettypsContext) interface{} {
+	item := Argitem{}
+	item.Type = ctx.IDENTIFIER().GetText()
 	if ctx.BRACKETS() != nil {
 		item.Islist = true
 	}
@@ -159,7 +172,7 @@ func (v *GoTypesVisitor) VisitTagitem(ctx *gotypes.TagitemContext) interface{} {
 	return Tagitem{ctx.IDENTIFIER().GetText(), strings.Trim(ctx.CSTRING().GetText(), `"`)}
 }
 
-func Parsestruct(strdef string) GoDefs {
+func ParsegoTypes(strdef string) GoDefs {
 	is := antlr.NewInputStream(strdef)
 
 	// Create the Lexer
@@ -180,9 +193,29 @@ func init() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	v := Parsestruct(string(data))
+	v := ParsegoTypes(string(data))
 	fmt.Println(v)
+
 	/*for _, value := range v {
 		fmt.Println(value)
 	}*/
+	fmt.Println(v.Funclists[0].RetType, v.Funclists[0].Arglists[0], v.Structlists)
+
+	// generate the code
+	tplstruct, err := pongo2.FromFile("./tpl/merge.tpl")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	strdata, err := tplstruct.Execute(pongo2.Context{
+		"mergefrom":  v.Funclists[0].Arglists[0],
+		"mergeto":    v.Funclists[0].RetType,
+		"structlist": v.Structlists,
+	})
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	ioutil.WriteFile(fmt.Sprintf("./db/merge.go"), []byte(strdata), 600)
 }

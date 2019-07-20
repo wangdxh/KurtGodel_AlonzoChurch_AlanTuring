@@ -174,79 +174,76 @@ type Testresult struct {
 	TestC
 }
 
-type TestBMerge struct {
-	TestB `groupby:"id"`
-	C     []*TestC `json:"privis"`
-}
-
 type TestMerge struct {
 	TestA `groupby:"id"`
-	B     []*TestBMerge `groupby:"" json:"roles"` //when we get the list will go into
+	B     []TestBMerge `groupby:"" json:"roles"` //when we get the list will go into
+}
+
+type TestBMerge struct {
+	TestB `groupby:"id"`
+	C     []TestC `json:"privis"`
 }
 
 func init() {
 	x := []Testresult{
-		{TestA{Id: 1, X: "x"}, TestB{2, "xx"}, TestC{3, "xxx"}},
-		{TestA{Id: 1, X: "x"}, TestB{2, "xx"}, TestC{4, "xxx"}},
-		{TestA{Id: 2, X: "x"}, TestB{2, "xx"}, TestC{3, "xxx"}},
-		{TestA{Id: 3, X: "x"}, TestB{2, "xx"}, TestC{2, "xxx"}},
-		{TestA{Id: 3, X: "x"}, TestB{2, "xx"}, TestC{3, "xxx"}},
-		{TestA{Id: 3, X: "x"}, TestB{3, "xx"}, TestC{3, "xxx"}},
+		{TestA{Id: 1, X: "x"}, TestB{2, "xxb2"}, TestC{1, "xxxc1"}},
+		{TestA{Id: 1, X: "x"}, TestB{2, "xxb2"}, TestC{2, "xxxc2"}},
+		{TestA{Id: 2, X: "x"}, TestB{2, "xxb2"}, TestC{3, "xxxc3"}},
+		{TestA{Id: 3, X: "x"}, TestB{2, "xxb2"}, TestC{4, "xxxc4"}},
+		{TestA{Id: 3, X: "x"}, TestB{2, "xxb2"}, TestC{5, "xxxc5"}},
+		{TestA{Id: 3, X: "x"}, TestB{3, "xxb3"}, TestC{6, "xxxc6"}},
 	}
 	y := Groupby(x)
-	/*for _, value := range y {
-		fmt.Println(value.TestA)
-		for _, val := range value.B {
-			fmt.Println("\t", val.TestB)
-			for _, val2 := range val.C {
-				fmt.Println("\t\t", val2.Id, val2.X)
-			}
-		}
-	}*/
+
 	data, _ := json.MarshalIndent(y, "", "   ")
 	fmt.Printf(string(data))
 }
 
-func Groupby(testresult []Testresult) (merge []*TestMerge) {
+func Groupby(testresult []Testresult) (merge []TestMerge) {
 	for _, valres := range testresult {
 		var m0 *TestMerge
-		for _, valmerg := range merge {
-			if valmerg.TestA.Id == valres.TestA.Id {
-				m0 = valmerg
+		for inx := 0; inx < len(merge); inx++ {
+			if merge[inx].TestA.Id == valres.TestA.Id {
+				m0 = &merge[inx]
 				break
 			}
 		}
 		if m0 == nil {
-			m0 = &TestMerge{}
-			merge = append(merge, m0)
+			merge = append(merge, TestMerge{})
+			m0 = &merge[len(merge)-1]
+
+			m0.TestA = valres.TestA
 		}
 
-		m0.TestA = valres.TestA
-
 		var m1 *TestBMerge
-		for _, value := range m0.B {
-			if value.TestB.Id == valres.TestB.Id {
-				m1 = value
+		for inx := 0; inx < len(m0.B); inx++ {
+			if m0.B[inx].TestB.Id == valres.TestB.Id {
+				m1 = &m0.B[inx]
 				break
 			}
 		}
+
 		if m1 == nil {
-			m1 = &TestBMerge{}
-			m0.B = append(m0.B, m1)
+			m0.B = append(m0.B, TestBMerge{})
+			m1 = &m0.B[len(m0.B)-1]
+
+			m1.TestB = valres.TestB
 		}
-		m1.TestB = valres.TestB
 
 		var m2 *TestC
-		for _, value := range m1.C {
-			if valres.TestC.Id == value.Id {
-				m2 = value
+		for inx := 0; inx < len(m1.C); inx++ {
+			if valres.TestC.Id == m1.C[inx].Id {
+				m2 = &m1.C[inx]
+				break
 			}
 		}
 		if m2 == nil {
-			m2 = &TestC{}
-			m1.C = append(m1.C, m2)
+			m1.C = append(m1.C, TestC{})
+			m2 = &m1.C[len(m1.C)-1]
+
+			*m2 = valres.TestC
 		}
-		*m2 = valres.TestC
+
 	}
 	return
 }

@@ -18,18 +18,19 @@ type Testresult struct {
 }
  
 type TestBMerge struct {
-	unique "TestB.Id == TestB.Id"
+	unique `unique: "TestB.Id == TestB.Id"`
 	TestB  `assign:"TestB"`
-	C     []*TestC `unique:"Id == TestC.Id" assign:"TestC" `
+	C     []TestC `unique:"Id == TestC.Id" assign:"TestC" `
 }
 
 type TestMerge struct {	
-	unique  `unique:"TestA.Id,TestA.Id"`
-	TestA assign:"TestA"
-	B     []*TestBMerge
-	Xlist []string unique:"self == TestC.X" assign:"TestC.X"
+	unique  `unique:"TestA.Id==TestA.Id"`
+	TestA `assign:"TestA"`
+	B     []TestBMerge
+	Xlist []string `unique:"self == TestC.X" assign:"TestC.X"`
 }
 
+func merge(input []Testresult) []TestMerge
 
 
 
