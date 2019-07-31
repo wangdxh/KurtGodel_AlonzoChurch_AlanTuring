@@ -18,7 +18,10 @@ docker run -d --name jaeger \
   
 #### jaeger 结果查询
 通过http 16686端口进行查询   
+
+http://172.16.64.193:16686/search
 http://192.168.37.133:16686   
+
  
 #### 参考代码 
  https://github.com/PacktPublishing/Mastering-Distributed-Tracing/
@@ -48,7 +51,7 @@ func InitJaeger(service string) (opentracing.Tracer, io.Closer) {
     //设置服务器信息
 		Reporter: &config.ReporterConfig{
 			LogSpans:           true,
-			LocalAgentHostPort: "192.168.37.133:6831",
+			LocalAgentHostPort: "172.16.64.193:6831",
 		},
 		ServiceName: service,
 	}

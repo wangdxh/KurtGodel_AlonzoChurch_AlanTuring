@@ -50,7 +50,7 @@ func InitJaeger(service string) (opentracing.Tracer, io.Closer) {
 		},
 		Reporter: &config.ReporterConfig{
 			LogSpans:           true,
-			LocalAgentHostPort: "192.168.37.133:6831",
+			LocalAgentHostPort: "172.16.64.193:6831",
 		},
 		ServiceName: service,
 	}
@@ -296,6 +296,7 @@ docker run -d --name jaeger \
 
 http://192.168.37.133:16686
 
+http://172.16.64.193:16686/search
 
 https://github.com/PacktPublishing/Mastering-Distributed-Tracing/
 */
