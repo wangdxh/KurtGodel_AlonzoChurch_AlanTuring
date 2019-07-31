@@ -19,7 +19,7 @@ docker run -d --name jaeger \
 #### jaeger 结果查询
 通过http 16686端口进行查询   
 
-http://172.16.64.193:16686/search
+http://172.16.64.193:16686/search    
 http://192.168.37.133:16686   
 
  
